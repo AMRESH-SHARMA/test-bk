@@ -16,7 +16,7 @@ app.use(cors());
 
 //endpoint shows Server Running
 app.get("/", (req, res) => {
-  res.json(`Server is Running : ${new Date().toLocaleString()}`);
+  res.json(`Server Connected to DB and Running : ${new Date().toLocaleString()}`);
 });
 
 
