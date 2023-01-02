@@ -2,7 +2,7 @@
 import express from "express";
 import { config } from "dotenv";
 import cors from "cors";
-// import { connectDatabase } from "./util/db.js";
+import { connectDatabase } from "./util/db.js";
 import { SECRETS } from "./util/config.js";
 
 
@@ -21,11 +21,11 @@ app.get("/", (req, res) => {
 
 
 // Connect to the database before listening
-// connectDatabase().then(() => {
-//   app.listen(PORT, () => {
-//     console.log(`Listening on port ${PORT}...`);
-//   })
-// })
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}...`);
+connectDatabase().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}...`);
+  })
 })
+// app.listen(PORT, () => {
+//   console.log(`Listening on port ${PORT}...`);
+// })
