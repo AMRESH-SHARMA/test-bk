@@ -7,7 +7,7 @@ import crypto from "crypto"
 // 1.Register a User
 export const registerUser = async (req, res, next) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const {email, password} = req.body;
 
     const exist = await User.findOne({ email: email }).countDocuments();
     if (exist) {
@@ -15,10 +15,10 @@ export const registerUser = async (req, res, next) => {
     }
 
     const user = await User.create({
-      name,
+      // name,
       email,
       password,
-      phone,
+      // phone,
       // avatar: {
       //   public_id: myCloud.public_id,
       //   url: myCloud.secure_url,
