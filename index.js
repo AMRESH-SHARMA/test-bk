@@ -1,10 +1,10 @@
 // packages
 import express from "express";
+import expressListRoutes from "express-list-routes";
 import { config } from "dotenv";
 import cors from "cors";
 import { connectDatabase } from "./util/db.js";
 import { SECRETS } from "./util/config.js";
-
 
 config();
 const app = express()
@@ -19,13 +19,22 @@ app.get("/", (req, res) => {
   res.json(`Server Connected to DB and Running : ${new Date().toLocaleString()}`);
 });
 
+//Auth Routes
+// app.post("/signup", userModel, signup);
+// app.put("/forgotPassword", forgotPassword);
+// app.put("/changePassword", userModel, adminProtect, changeUserPassword);
+// app.post("/admin-signup", userModel, employerSignUp);
+// app.post("/signin", userModel, signin);
+// app.post("/admin-signin", userModel, adminSignin);
+
+//auth
+import userRoute from "./resources/user/userRoute.js";
+app.use("/", userRoute);
 
 // Connect to the database before listening
 connectDatabase().then(() => {
   app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}...`);
   })
+  expressListRoutes(app);
 })
-// app.listen(PORT, () => {
-//   console.log(`Listening on port ${PORT}...`);
-// })
