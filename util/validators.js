@@ -30,7 +30,40 @@ export const vAccessToken = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
-    return res.status(422).json({ success: false, msg: errors.mapped() });
+      return res.status(422).json({ success: false, msg: errors.mapped() });
+    next();
+  },
+];
+
+export const vCreateUser = [
+  check('username')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('Username can not be empty!')
+    .bail(),
+  check('email')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('email can not be empty!')
+    .bail(),
+  check('phone')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('phone can not be empty!')
+    .bail(),
+  check('city')
+    .trim()
+    .escape()
+    .notEmpty()
+    .withMessage('city can not be empty!')
+    .bail(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(422).json({ success: false, msg: errors.mapped() });
     next();
   },
 ];

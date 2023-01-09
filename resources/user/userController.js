@@ -4,10 +4,10 @@ import { newToken } from '../../util/jwt.js'
 import generator from 'generate-password'
 import crypto from "crypto"
 
-// 1.Register a User
+//Register a User
 export const registerUser = async (req, res, next) => {
   try {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     const exist = await User.findOne({ email: email }).countDocuments();
     if (exist) {
@@ -31,7 +31,7 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
-// 2.Login User
+//Login User
 export const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -61,7 +61,7 @@ export const loginUser = async (req, res, next) => {
 };
 
 
-// 3.Logout User
+//Logout User
 export const logout = async (req, res, next) => {
   try {
     const options = {
@@ -167,31 +167,7 @@ export const logout = async (req, res, next) => {
 //   sendToken(user, 200, res);
 // });
 
-// //6.Get User Detail
-// export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
-//   const user = await User.findById(req.user.id);
 
-//   res.status(200).json({
-//     success: true,
-//     user,
-//   });
-// });
-
-// // 7.Get single user (admin)
-// export const getSingleUser = catchAsyncErrors(async (req, res, next) => {
-//   const user = await User.findById(req.params.id);
-
-//   if (!user) {
-//     return next(
-//       new ErrorHander(`User does not exist with Id: ${req.params.id}`)
-//     );
-//   }
-
-//   res.status(200).json({
-//     success: true,
-//     user,
-//   });
-// });
 // // 8.update User password
 // export const updatePassword = catchAsyncErrors(async (req, res, next) => {
 //   const user = await User.findById(req.user.id).select("+password");
@@ -214,39 +190,39 @@ export const logout = async (req, res, next) => {
 // });
 
 // 9.update User Profile
-export const updateProfile = async (req, res, next) => {
-  const newUserData = {
-    name: req.body.name,
-    phone: req.body.phone,
-    email: req.body.email,
-  };
+// export const updateProfile = async (req, res, next) => {
+//   const newUserData = {
+//     name: req.body.name,
+//     phone: req.body.phone,
+//     email: req.body.email,
+//   };
 
-  if (req.files) {
-    const files = req.files.avatar;
-    const user = await User.findById(req.user.id);
+//   if (req.files) {
+//     const files = req.files.avatar;
+//     const user = await User.findById(req.user.id);
 
-    const imageId = user.avatar.public_id;
+//     const imageId = user.avatar.public_id;
 
-    await cloudinary.uploader.destroy(imageId)
+//     await cloudinary.uploader.destroy(imageId)
 
-    const myCloud = await cloudinary.uploader.upload(files.tempFilePath, {
-      folder: "image",
-    },
-      function (error, result) { (result, error) });
+//     const myCloud = await cloudinary.uploader.upload(files.tempFilePath, {
+//       folder: "image",
+//     },
+//       function (error, result) { (result, error) });
 
-    newUserData.avatar = {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    };
-  }
-  const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
-  });
+//     newUserData.avatar = {
+//       public_id: myCloud.public_id,
+//       url: myCloud.secure_url,
+//     };
+//   }
+//   const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
+//     new: true,
+//     runValidators: true,
+//     useFindAndModify: false,
+//   });
 
-  sendResponse(200, true, user, res)
-};
+//   sendResponse(200, true, user, res)
+// };
 
 // // 9.Get all users(admin)
 // export const getAllUser = catchAsyncErrors(async (req, res, next) => {
@@ -258,3 +234,61 @@ export const updateProfile = async (req, res, next) => {
 //     users,
 //   });
 // });
+
+//user create
+export const createUser = async (req, res, next) => {
+  try {
+    const { username, email, phone, city } = req.body;
+    const exist = await User.findOne({ email: email }).countDocuments();
+    if (exist) {
+      return sendResponse(409, false, 'User already exist', res)
+    }
+    const user = await User.create({
+      username,
+      email,
+      phone,
+      city,
+      role: 'user'
+    });
+    sendResponse(201, true, user, res)
+  } catch (e) {
+    console.log(e);
+    sendResponse(400, false, 'Error Communicating with server', res)
+  }
+};
+
+//Get all users(except admin)
+export const getAllUser = async (req, res, next) => {
+  try {
+    const users = await User.find().all('role', ['user']);
+    sendResponse(200, true, users, res)
+  } catch (e) {
+    console.log(e);
+    sendResponse(400, false, 'Error Communicating with server', res)
+  }
+};
+
+//Get single user
+export const getSingleUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return sendResponse(400, false, `User does not exist with Id: ${req.params.id}`, res)
+    }
+    sendResponse(200, true, user, res)
+  } catch (e) {
+    console.log(e);
+    sendResponse(400, false, 'Error Communicating with server', res)
+  }
+};
+
+//Update user
+export const updateUser = async (req, res, next) => {
+  try {
+    const users = await User.find().all('role', ['user']);
+    sendResponse(200, true, users, res)
+  } catch (e) {
+    console.log(e);
+    sendResponse(400, false, 'Error Communicating with server', res)
+  }
+};

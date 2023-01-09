@@ -4,7 +4,7 @@ import crypto from "crypto"
 import { SECRETS } from "../../util/config.js";
 
 const userSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
   },
   email: {
@@ -14,18 +14,21 @@ const userSchema = new mongoose.Schema({
   phone: {
     type: Number,
   },
+  city: {
+    type: String,
+  },
   password: {
     type: String,
     select: false,
   },
-  avatar: {
-    public_id: {
-      type: String,
-    },
-    url: {
-      type: String,
-    },
-  },
+  // avatar: {
+  //   public_id: {
+  //     type: String,
+  //   },
+  //   url: {
+  //     type: String,
+  //   },
+  // },
   role: {
     type: String,
   },
@@ -41,7 +44,7 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: Date,
 }, { timestamps: true });
 
-//Password bcrypt before saving into db
+// Password bcrypt before saving into db
 userSchema.pre("save", async function (next) {
   try {
     const hash = await bcrypt.hash(this.password, 8);
