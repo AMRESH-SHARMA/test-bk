@@ -1,5 +1,6 @@
 // packages
 import express from "express";
+import fileUpload from 'express-fileupload';
 import expressListRoutes from "express-list-routes";
 import { config } from "dotenv";
 import cors from "cors";
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload());
 app.use(cors());
 
 //endpoint shows Server Running
@@ -27,9 +29,13 @@ app.get("/", (req, res) => {
 // app.post("/signin", userModel, signin);
 // app.post("/admin-signin", userModel, adminSignin);
 
-//auth
+//User
 import userRoute from "./resources/user/userRoute.js";
 app.use("/", userRoute);
+
+//Book
+import bookRoute from "./resources/book/bookRoute.js";
+app.use("/", bookRoute);
 
 // Connect to the database before listening
 connectDatabase().then(() => {

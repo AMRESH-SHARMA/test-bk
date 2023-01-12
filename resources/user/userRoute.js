@@ -8,6 +8,7 @@ import {
   // resetPassword,
   // updatePassword,
   // updateProfile,
+  updateUserStatus,
   updateUser,
   getSingleUser,
   getAllUser,
@@ -45,6 +46,8 @@ router.route("/user/create-user").post(createUser);
 
 router.route("/user/get-single-user/:id").get(getSingleUser);
 
-router.route("/user/update-user").put(updateUser);
+router.route("/user/update-user/:id").put(updateUser);
+
+router.route("/user/update-user-status").put(updateUserStatus);
 
 export default router;

@@ -4,7 +4,7 @@ import crypto from "crypto"
 import { SECRETS } from "../../util/config.js";
 
 const userSchema = new mongoose.Schema({
-  username: {
+  userName: {
     type: String,
   },
   email: {
@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: Number,
+    unique: true,
   },
   city: {
     type: String,
@@ -40,20 +41,21 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: null,
   },
+  booksAdded: [],
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 }, { timestamps: true });
 
 // Password bcrypt before saving into db
-userSchema.pre("save", async function (next) {
-  try {
-    const hash = await bcrypt.hash(this.password, 8);
-    this.password = hash;
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
+// userSchema.pre("save", async function (next) {
+//   try {
+//     const hash = await bcrypt.hash(this.password, 8);
+//     this.password = hash;
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 
 // Compare Password

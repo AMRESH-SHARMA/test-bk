@@ -1,4 +1,5 @@
 import User from "./userModel.js"
+import mongoose from "mongoose"
 import { sendResponse } from "../../util/sendResponse.js";
 import { newToken } from '../../util/jwt.js'
 import generator from 'generate-password'
@@ -238,13 +239,13 @@ export const logout = async (req, res, next) => {
 //user create
 export const createUser = async (req, res, next) => {
   try {
-    const { username, email, phone, city } = req.body;
+    const { userName, email, phone, city } = req.body;
     const exist = await User.findOne({ email: email }).countDocuments();
     if (exist) {
       return sendResponse(409, false, 'User already exist', res)
     }
     const user = await User.create({
-      username,
+      userName,
       email,
       phone,
       city,
@@ -253,7 +254,7 @@ export const createUser = async (req, res, next) => {
     sendResponse(201, true, user, res)
   } catch (e) {
     console.log(e);
-    sendResponse(400, false, 'Error Communicating with server', res)
+    sendResponse(400, false, e.message, res)
   }
 };
 
@@ -264,7 +265,7 @@ export const getAllUser = async (req, res, next) => {
     sendResponse(200, true, users, res)
   } catch (e) {
     console.log(e);
-    sendResponse(400, false, 'Error Communicating with server', res)
+    sendResponse(400, false, e.message, res)
   }
 };
 
@@ -278,17 +279,48 @@ export const getSingleUser = async (req, res, next) => {
     sendResponse(200, true, user, res)
   } catch (e) {
     console.log(e);
-    sendResponse(400, false, 'Error Communicating with server', res)
+    sendResponse(400, false, e.message, res)
   }
 };
 
 //Update user
 export const updateUser = async (req, res, next) => {
   try {
-    const users = await User.find().all('role', ['user']);
-    sendResponse(200, true, users, res)
+    const { userName, email, phone, city } = req.body
+
+    const newUserData = {
+      userName: userName,
+      email: email,
+      phone: phone,
+      city: city
+    };
+    const user = await User.findByIdAndUpdate(req.params.id, newUserData);
+    sendResponse(200, true, 'Updated Successfully', res)
   } catch (e) {
-    console.log(e);
-    sendResponse(400, false, 'Error Communicating with server', res)
+    if (e.code) {
+      return sendResponse(400, false, `${Object.keys(e.keyValue)} Already in use`, res)
+    }
+    sendResponse(400, false, e, res)
+  }
+};
+
+//Update user
+export const updateUserStatus = async (req, res, next) => {
+  try {
+    const TrueStatus = {
+      approved: 'true'
+    };
+    const FalseStatus = {
+      approved: 'false'
+    };
+    const user = await User.findById(req.body.id);
+    if (user.approved) {
+      await User.updateOne({ _id: mongoose.mongo.ObjectId(req.body.id) }, FalseStatus);
+    } else {
+      await User.updateOne({ _id: mongoose.mongo.ObjectId(req.body.id) }, TrueStatus);
+    }
+    sendResponse(200, true, 'User Status Updated', res)
+  } catch (e) {
+    sendResponse(400, false, e.message, res)
   }
 };
