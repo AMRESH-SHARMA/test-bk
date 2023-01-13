@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
-import { SECRETS } from './config.js';
+// import { config } from "dotenv";
+// config();
 
 export const connectDatabase = async () => {
   try {
@@ -7,7 +8,7 @@ export const connectDatabase = async () => {
       .set('strictQuery', false)
       .set('autoCreate', true)
       .set('autoIndex', true)
-      .connect(SECRETS.mongo_uri);
+      .connect(process.env.MONGO_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.log(error);
