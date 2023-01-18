@@ -42,46 +42,46 @@ export const addBook = async (req, res, next) => {
       uploadedBy,
     }
 
-    // await cloudinary.v2.uploader.upload(image1[0].path, {
-    //   folder: "book/",
-    // }).then((result1) => {
-    //   payloadObj.image1 = {
-    //     public_id: result1.public_id,
-    //     url: result1.url,
-    //   }
-    // })
+    await cloudinary.v2.uploader.upload(image1[0].path, {
+      folder: "book/",
+    }).then((result1) => {
+      payloadObj.image1 = {
+        public_id: result1.public_id,
+        url: result1.url,
+      }
+    })
 
-    // if (image2) {
-    //   await cloudinary.v2.uploader.upload(image2[0].path, {
-    //     folder: "book/",
-    //   }).then((result2) => {
-    //     payloadObj.image2 = {
-    //       public_id: result2.public_id,
-    //       url: result2.url,
-    //     }
-    //   })
-    // }
-    // if (image3) {
-    //   await cloudinary.v2.uploader.upload(image3[0].path, {
-    //     folder: "book/",
-    //   }).then((result3) => {
-    //     payloadObj.image3 = {
-    //       public_id: result3.public_id,
-    //       url: result3.url,
-    //     }
-    //   })
-    // }
-    // if (image4) {
-    //   await cloudinary.v2.uploader.upload(image4[0].path, {
-    //     folder: "book/",
-    //   }).then((result4) => {
-    //     payloadObj.image4 = {
-    //       public_id: result4.public_id,
-    //       url: result4.url,
-    //     }
-    //   })
-    // }
-    const newBook= await Book.create(payloadObj)
+    if (image2) {
+      await cloudinary.v2.uploader.upload(image2[0].path, {
+        folder: "book/",
+      }).then((result2) => {
+        payloadObj.image2 = {
+          public_id: result2.public_id,
+          url: result2.url,
+        }
+      })
+    }
+    if (image3) {
+      await cloudinary.v2.uploader.upload(image3[0].path, {
+        folder: "book/",
+      }).then((result3) => {
+        payloadObj.image3 = {
+          public_id: result3.public_id,
+          url: result3.url,
+        }
+      })
+    }
+    if (image4) {
+      await cloudinary.v2.uploader.upload(image4[0].path, {
+        folder: "book/",
+      }).then((result4) => {
+        payloadObj.image4 = {
+          public_id: result4.public_id,
+          url: result4.url,
+        }
+      })
+    }
+    const newBook = await Book.create(payloadObj)
 
     const user = await User.findById(uploadedBy)
     user.booksAdded.push(newBook._id)
@@ -141,14 +141,11 @@ export const updateBookStatus = async (req, res, next) => {
 export const deleteSingleBook = async (req, res, next) => {
   try {
     await Book.deleteOne({ _id: req.params.id })
-    await User.findByIdAndUpdate(req.params.uploadedBy,
-      {
-        $pull: {
-          booksAdded: {
-            bookId: req.params.id,
-          }
-        }
-      })
+    const user = await User.findById(req.params.uploadedBy);
+    const index = user.booksAdded.indexOf(req.params._id);
+    user.booksAdded.splice(index, 1);
+    await user.save();
+
     sendResponse(201, true, 'Book deleted', res)
   } catch (e) {
     sendResponse(400, false, e.message, res)
