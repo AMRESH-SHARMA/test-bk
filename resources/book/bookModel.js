@@ -4,10 +4,12 @@ const bookSchema = new mongoose.Schema({
     type: String,
   },
   genre: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Genre",
   },
   language: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Language",
   },
   description: {
     type: String,
@@ -15,21 +17,51 @@ const bookSchema = new mongoose.Schema({
   rentPerDay: {
     type: Number,
   },
-  // avatar: {
-  //   public_id: {
-  //     type: String,
-  //   },
-  //   url: {
-  //     type: String,
-  //   },
-  // },
+  image1:
+  {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
+  },
+  image2:
+  {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
+  },
+  image3:
+  {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
+  },
+  image4:
+  {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
+  },
   approved: {
     type: Boolean,
     default: "false",
-  }, uploadedBy: {
-    type: String,
+  },
+  uploadedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
 }, { timestamps: true });
 
-const BookModel = mongoose.model("Book", bookSchema);
-export default BookModel;
+const bookModel = mongoose.model("Book", bookSchema);
+export default bookModel;

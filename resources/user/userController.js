@@ -2,8 +2,6 @@ import User from "./userModel.js"
 import mongoose from "mongoose"
 import { sendResponse } from "../../util/sendResponse.js";
 import { newToken } from '../../util/jwt.js'
-import generator from 'generate-password'
-import crypto from "crypto"
 
 //Register a User
 export const registerUser = async (req, res, next) => {
@@ -27,8 +25,10 @@ export const registerUser = async (req, res, next) => {
     });
     sendResponse(201, true, user, res)
   } catch (e) {
-    console.log(e);
-    sendResponse(400, false, 'Error Communicating with server', res)
+    if (e.code) {
+      return sendResponse(400, false, `${Object.keys(e.keyValue)} Already in use`, res)
+    }
+    sendResponse(400, false, e, res)
   }
 };
 
@@ -239,12 +239,13 @@ export const logout = async (req, res, next) => {
 //user create
 export const createUser = async (req, res, next) => {
   try {
-    const { userName, email, phone, city } = req.body;
+    const { uniqueId, userName, email, phone, city } = req.body;
     const exist = await User.findOne({ email: email }).countDocuments();
     if (exist) {
       return sendResponse(409, false, 'User already exist', res)
     }
     const user = await User.create({
+      _id: uniqueId,
       userName,
       email,
       phone,
@@ -253,8 +254,10 @@ export const createUser = async (req, res, next) => {
     });
     sendResponse(201, true, user, res)
   } catch (e) {
-    console.log(e);
-    sendResponse(400, false, e.message, res)
+    if (e.code) {
+      return sendResponse(400, false, `${Object.keys(e.keyValue)} Already in use`, res)
+    }
+    sendResponse(400, false, e, res)
   }
 };
 
@@ -272,7 +275,7 @@ export const getAllUser = async (req, res, next) => {
 //Get single user
 export const getSingleUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate('booksAdded')
     if (!user) {
       return sendResponse(400, false, `User does not exist with Id: ${req.params.id}`, res)
     }
@@ -294,7 +297,7 @@ export const updateUser = async (req, res, next) => {
       phone: phone,
       city: city
     };
-    const user = await User.findByIdAndUpdate(req.params.id, newUserData);
+    await User.findByIdAndUpdate(req.params.id, newUserData);
     sendResponse(200, true, 'Updated Successfully', res)
   } catch (e) {
     if (e.code) {

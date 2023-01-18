@@ -4,6 +4,7 @@ export const connectDatabase = async () => {
   try {
     const conn = await mongoose
       .set('strictQuery', false)
+      .set('strictPopulate', false)
       .set('autoCreate', true)
       .set('autoIndex', true)
       .connect(process.env.MONGO_URI);

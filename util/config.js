@@ -6,9 +6,9 @@ export const SECRETS = {
   jwtExp: "1y",
   node_env: process.env.NODE_ENV,
 
-  // cloud_name: process.env.Cloudinary_CLOUD_NAME,
-  // api_key: process.env.Cloudinary_API_KEY,
-  // api_secret: process.env.Cloudinary_API_SECRET,
+  cloud_name: process.env.Cloudinary_CLOUD_NAME,
+  api_key: process.env.Cloudinary_API_KEY,
+  api_secret: process.env.Cloudinary_API_SECRET,
 
 
   // spacesEndpoint: process.env.DO_SPACES_ENDPOINT,

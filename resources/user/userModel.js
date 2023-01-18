@@ -1,7 +1,6 @@
 import mongoose from "mongoose"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import { SECRETS } from "../../util/config.js";
 
 const userSchema = new mongoose.Schema({
   userName: {
@@ -9,6 +8,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    lowercase: true,
     unique: true,
   },
   phone: {
@@ -41,7 +41,12 @@ const userSchema = new mongoose.Schema({
     type: Number,
     default: null,
   },
-  booksAdded: [],
+  booksAdded: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Book',
+    }
+  ],
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 }, { timestamps: true });
@@ -70,9 +75,9 @@ userSchema.methods.getResetPasswordToken = function () {
 
   // Hashing and adding reset PasswordToken to userSchema
   this.resetPasswordToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
   //expire password time
   // console.log(this.resetPasswordToken)
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;//15 minut
