@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { SECRETS } from "./config.js";
 
 export const newToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, SECRETS.jwt, {
+  return jwt.sign({ id: user._id,name: user.name, role: user.role }, SECRETS.jwt, {
     expiresIn: SECRETS.jwtExp,
   });
 };

@@ -37,6 +37,10 @@ app.get("/getUid", (req, res) => {
 // app.post("/signin", userModel, signin);
 // app.post("/admin-signin", userModel, adminSignin);
 
+//Admin
+import adminRoute from "./resources/admin/adminRoute.js";
+app.use("/", adminRoute);
+
 //User
 import userRoute from "./resources/user/userRoute.js";
 app.use("/", userRoute);
@@ -52,6 +56,18 @@ app.use("/", genreRoute);
 //Language
 import languageRoute from "./resources/language/languageRoute.js";
 app.use("/", languageRoute);
+
+//Logos
+import logosRoute from "./resources/logos/logosRoute.js";
+app.use("/", logosRoute);
+
+//Address
+import addressRoute from "./resources/address/addressRoute.js";
+app.use("/", addressRoute);
+
+// Social Media
+import socialMediaRoute from "./resources/socialMedia/socialMediaRoute.js";
+app.use("/", socialMediaRoute);
 
 // Connect to the database before listening
 connectDatabase().then(() => {

@@ -237,7 +237,7 @@ export const logout = async (req, res, next) => {
 // });
 
 //user create
-export const createUser = async (req, res, next) => {
+export const addUser = async (req, res, next) => {
   try {
     const { uniqueId, userName, email, phone, city } = req.body;
     const exist = await User.findOne({ email: email }).countDocuments();
